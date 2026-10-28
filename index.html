@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca - Entrar ou Registar</title>
+    <style>
+        :root {
+            --azul-dogman: #2b59a2;
+            --amarelo-fundo: #fbc02d;
+            --laranja-titulo: #e65100;
+            --branco: #ffffff;
+            --preto: #212121;
+            --cinza: #f4f4f4;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: var(--amarelo-fundo);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: var(--branco);
+            border: 4px solid var(--preto);
+            border-radius: 15px;
+            box-shadow: 8px 8px 0px var(--preto);
+            width: 100%;
+            max-width: 380px;
+            overflow: hidden;
+        }
+
+        .abas {
+            display: flex;
+            border-bottom: 4px solid var(--preto);
+        }
+
+        .aba {
+            flex: 1;
+            padding: 15px;
+            background-color: var(--cinza);
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+        }
+
+        .aba.ativa {
+            background-color: var(--branco);
+            color: var(--laranja-titulo);
+        }
+
+        .formulario {
+            padding: 25px;
+            display: none;
+            text-align: center;
+        }
+
+        .formulario.ativo {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 3px solid var(--preto);
+            border-radius: 8px;
+            font-family: inherit;
+            box-sizing: border-box;
+            font-size: 1rem;
+            background-color: #fffde7;
+        }
+
+        button.btn-acao {
+            background-color: var(--azul-dogman);
+            color: var(--branco);
+            border: 3px solid var(--preto);
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px var(--preto);
+            width: 100%;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        button.btn-acao:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px var(--preto);
+        }
+
+        .mensagem {
+            font-weight: bold;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .erro { color: #d32f2f; }
+        .sucesso { color: #388e3c; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="abas">
+            <button id="aba-login" class="aba ativa" onclick="mudarAba('login')">Entrar</button>
+            <button id="aba-registo" class="aba" onclick="mudarAba('registo')">Registar</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="form-login" class="formulario ativo">
+            <div class="input-group">
+                <label for="login-user">Utilizador:</label>
+                <input type="text" id="login-user" placeholder="O teu nome de utilizador">
+            </div>
+            <div class="input-group">
+                <label for="login-pass">Palavra-passe:</label>
+                <input type="password" id="login-pass" placeholder="A tua senha">
+            </div>
+            <button class="btn-acao" onclick="fazerLogin()">Entrar! 🚀</button>
+            <div id="erro-login" class="mensagem erro">Utilizador ou palavra-passe incorretos!</div>
+        </div>
+
+        <!-- REGISTO -->
+        <div id="form-registo" class="formulario">
+            <div class="input-group">
+                <label for="registo-user">Escolhe um Utilizador:</label>
+                <input type="text" id="registo-user" placeholder="Ex: heroi_dogman">
+            </div>
+            <div class="input-group">
+                <label for="registo-pass">Escolhe uma Palavra-passe:</label>
+                <input type="password" id="registo-pass" placeholder="Mínimo 4 caracteres">
+            </div>
+            <button class="btn-acao" onclick="fazerRegisto()">Criar Conta! 🎉</button>
+            <div id="erro-registo" class="mensagem erro">Preenche todos os campos corretamente!</div>
+            <div id="sucesso-registo" class="mensagem sucesso">Conta criada! Já podes fazer Login.</div>
+        </div>
+    </div>
+
+    <script>
+        // Sincronização: se já houver sessão ativa, vai para a biblioteca
+        if (localStorage.getItem("usuario_ativo")) {
+            window.location.href = "biblioteca.html";
+        }
+
+        function mudarAba(tipo) {
+            document.querySelectorAll('.mensagem').forEach(m => m.style.display = 'none');
+            if (tipo === 'login') {
+                document.getElementById('aba-login').classList.add('ativa');
+                document.getElementById('aba-registo').classList.remove('ativa');
+                document.getElementById('form-login').classList.add('ativo');
+                document.getElementById('form-registo').classList.remove('ativo');
+            } else {
+                document.getElementById('aba-registo').classList.add('ativa');
+                document.getElementById('aba-login').classList.remove('ativa');
+                document.getElementById('form-registo').classList.add('ativo');
+                document.getElementById('form-login').classList.remove('ativo');
+            }
+        }
+
+        function fazerRegisto() {
+            const user = document.getElementById("registo-user").value.trim();
+            const pass = document.getElementById("registo-pass").value.trim();
+            const erro = document.getElementById("erro-registo");
+            const sucesso = document.getElementById("sucesso-registo");
+
+            erro.style.display = "none";
+            sucesso.style.display = "none";
+
+            if (user === "" || pass.length < 4) {
+                erro.textContent = "O utilizador não pode estar vazio e a senha deve ter pelo menos 4 caracteres!";
+                erro.style.display = "block";
+                return;
+            }
+
+            if (localStorage.getItem("user_" + user) !== null || user.toLowerCase() === "admin") {
+                erro.textContent = "Este nome de utilizador já existe! Escolhe outro.";
+                erro.style.display = "block";
+                return;
+            }
+
+            localStorage.setItem("user_" + user, pass);
+            sucesso.style.display = "block";
+            
+            document.getElementById("registo-user").value = "";
+            document.getElementById("registo-pass").value = "";
+            setTimeout(() => mudarAba('login'), 1200);
+        }
+
+        function fazerLogin() {
+            const user = document.getElementById("login-user").value.trim();
+            const pass = document.getElementById("login-pass").value.trim();
+            const erro = document.getElementById("erro-login");
+
+            erro.style.display = "none";
+
+            if (user === "admin" && pass === "1234") {
+                localStorage.setItem("usuario_ativo", "admin");
+                window.location.href = "biblioteca.html";
+                return;
+            }
+
+            const senhaGuardada = localStorage.getItem("user_" + user);
+
+            if (senhaGuardada !== null && senhaGuardada === pass) {
+                localStorage.setItem("usuario_ativo", user);
+                window.location.href = "biblioteca.html";
+            } else {
+                erro.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
